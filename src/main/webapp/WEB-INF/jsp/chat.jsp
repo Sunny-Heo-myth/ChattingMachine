@@ -23,14 +23,18 @@
             border-left: 3px solid #FFBB00;
             margin-bottom: 20px;
         }
-        .chating{
+        .chattingBox{
             background-color: #000;
             width: 500px;
             height: 500px;
             overflow: auto;
         }
-        .chating p{
-            color: #fff;
+        .chattingBox .me{
+            color: #F6F6F6;
+            text-align: right;
+        }
+        .chattingBox .others{
+            color: #FFE400;
             text-align: left;
         }
         input{
@@ -45,25 +49,28 @@
 
 <body>
 <div id="container" class="container">
-    <h1>채팅</h1>
-    <div id="chating" class="chating">
+    <h1>CHAT</h1>
+
+    <input type="hidden" id="sessionId" value="">
+
+    <div id="chattingBox" class="chattingBox">
     </div>
 
     <div id="yourName">
         <table class="inputTable">
             <tr>
-                <th>사용자명</th>
+                <th>name</th>
                 <th><input type="text" name="userName" id="userName"></th>
-                <th><button onclick="chatName()" id="startBtn">이름 등록</button></th>
+                <th><button onclick="chatName()" id="startBtn">register name</button></th>
             </tr>
         </table>
     </div>
     <div id="yourMsg">
         <table class="inputTable">
             <tr>
-                <th>메시지</th>
-                <th><input id="chatting" placeholder="보내실 메시지를 입력하세요."></th>
-                <th><button onclick="send()" id="sendBtn">보내기</button></th>
+                <th>message</th>
+                <th><input id="chatting" placeholder="Insert Message."></th>
+                <th><button onclick="send()" id="sendBtn">send</button></th>
             </tr>
         </table>
     </div>
@@ -71,22 +78,43 @@
 </body>
 
 <script type="text/javascript">
-    var ws;
+    var webSocket;
 
-    function wsOpen(){
-        ws = new WebSocket("ws://" + location.host + "/chatting");
-        wsEvt();
+    function webSocketOpen(){
+        webSocket = new WebSocket("ws://" + location.host + "/chatting");
+        webSocketEvent();
     }
 
-    function wsEvt() {
-        ws.onopen = function(data){
-            //소켓이 열리면 초기화 세팅하기
+    function webSocketEvent() {
+        // activated when socket is opened.
+        webSocket.onopen = function(data){
+
         }
 
-        ws.onmessage = function(data) {
-            var msg = data.data;
-            if(msg != null && msg.trim() !== ''){
-                $("#chating").append("<p>" + msg + "</p>");
+        // activated when message is received.
+        webSocket.onmessage = function(data) {
+            var message = data.data;
+            if(message != null && message.trim() !== ''){
+                var messageData = JSON.parse(message)
+                if (messageData.type === "getId") {
+                    var sessionId = messageData.sessionId;
+                    if (sessionId !== '') {
+                        $("#sessionId").val(sessionId);
+                    }
+                }
+                else if (messageData.type === "message") {
+                    if (messageData.sessionId === $("#sessionId").val()) {
+                        $("#chattingBox").append("<p class='me'>me : " + messageData.message + "</p>");
+                    }
+                    else {
+                        $("#chattingBox").append("<p class='others'>"
+                            + messageData.userName + " : " + messageData.message + "</p>");
+                    }
+                }
+                else {
+                    console.warn("unknown type!")
+                }
+                // $("#chattingBox").append("<p>" + message + "</p>");
             }
         }
 
@@ -100,19 +128,27 @@
     function chatName(){
         var userName = $("#userName").val();
         if(userName == null || userName.trim() === ""){
-            alert("사용자 이름을 입력해주세요.");
+            alert("Insert user name.");
             $("#userName").focus();
         }else{
-            wsOpen();
+            webSocketOpen();
             $("#yourName").hide();
             $("#yourMsg").show();
         }
     }
 
     function send() {
-        var uN = $("#userName").val();
-        var msg = $("#chatting").val();
-        ws.send(uN+" : "+msg);
+        var object = {
+            type: "message",
+            sessionId : $("#sessionId").val(),
+            userName : $("#userName").val(),
+            message : $("#chatting").val()
+        }
+        webSocket.send(JSON.stringify(object))
+        // var userName = $("#userName").val();
+        // var message = $("#chatting").val();
+        // webSocket.send(userName+" : "+message);
+
         $('#chatting').val("");
     }
 </script>
