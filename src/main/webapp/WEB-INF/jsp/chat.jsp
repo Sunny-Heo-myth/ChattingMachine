@@ -5,7 +5,7 @@
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <meta charset="UTF-8">
-    <title>Chatting</title>
+    <title>Chat</title>
     <style>
         *{
             margin:0;
@@ -49,9 +49,10 @@
 
 <body>
 <div id="container" class="container">
-    <h1>CHAT</h1>
+    <h1>${roomName}</h1>
 
     <input type="hidden" id="sessionId" value="">
+    <input type="hidden" id="roomId" value="${roomId}">
 
     <div id="chattingBox" class="chattingBox">
     </div>
@@ -61,7 +62,7 @@
             <tr>
                 <th>name</th>
                 <th><input type="text" name="userName" id="userName"></th>
-                <th><button onclick="chatName()" id="startBtn">register name</button></th>
+                <th><button onclick="chatName()" id="startBtn">register</button></th>
             </tr>
         </table>
     </div>
@@ -80,37 +81,41 @@
 <script type="text/javascript">
     var webSocket;
 
+    // send WebSocket with current room number
     function webSocketOpen(){
-        webSocket = new WebSocket("ws://" + location.host + "/chatting");
+        webSocket = new WebSocket("ws://" + location.host + "/chatting/" + $("#roomId").val());
         webSocketEvent();
     }
 
     function webSocketEvent() {
-        // activated when socket is opened.
+        // called when socket opened.
         webSocket.onopen = function(data){
-
         }
 
-        // activated when message is received.
+        // called when message is received.
         webSocket.onmessage = function(data) {
             var message = data.data;
             if(message != null && message.trim() !== ''){
-                var messageData = JSON.parse(message)
-                if (messageData.type === "getId") {
-                    var sessionId = messageData.sessionId;
-                    if (sessionId !== '') {
+                var parsedMessage = JSON.parse(message)
+
+                if (parsedMessage.type === "getId") {     // when json's type is get(Session)Id,
+                    var sessionId = parsedMessage.sessionId != null ? parsedMessage.sessionId : "";
+                    if (sessionId !== "") {
                         $("#sessionId").val(sessionId);
                     }
                 }
-                else if (messageData.type === "message") {
-                    if (messageData.sessionId === $("#sessionId").val()) {
-                        $("#chattingBox").append("<p class='me'>me : " + messageData.message + "</p>");
+
+                else if (parsedMessage.type === "message") {      // when json's type is message,
+                    if (parsedMessage.sessionId === $("#sessionId").val()) {
+                        $("#chattingBox").append("<p class='me'>me : "
+                            + parsedMessage.message + "</p>");
                     }
                     else {
-                        $("#chattingBox").append("<p class='others'>"
-                            + messageData.userName + " : " + messageData.message + "</p>");
+                        $("#chattingBox").append("<p class='others'>" + parsedMessage.userName + " : "
+                            + parsedMessage.message + "</p>");
                     }
                 }
+
                 else {
                     console.warn("unknown type!")
                 }
@@ -119,18 +124,18 @@
         }
 
         document.addEventListener("keypress", function(e){
-            if(e.keyCode === 13){ //enter press
+            if(e.keyCode === 13){       // when "ENTER" pressed.
                 send();
             }
         });
     }
 
-    function chatName(){
+    function chatName() {
         var userName = $("#userName").val();
-        if(userName == null || userName.trim() === ""){
+        if (userName == null || userName.trim() === "") {
             alert("Insert user name.");
             $("#userName").focus();
-        }else{
+        } else {
             webSocketOpen();
             $("#yourName").hide();
             $("#yourMsg").show();
@@ -139,8 +144,9 @@
 
     function send() {
         var object = {
-            type: "message",
-            sessionId : $("#sessionId").val(),
+            type : "message",
+            roomId : $("#roomId").val(),
+            sessionId: $("#sessionId").val(),
             userName : $("#userName").val(),
             message : $("#chatting").val()
         }
