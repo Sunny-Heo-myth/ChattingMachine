@@ -1,6 +1,7 @@
 package com.sunny.chattingmachine.controller;
 
-import com.sunny.chattingmachine.VO.Room;
+import com.sunny.chattingmachine.domain.Room;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,8 +17,11 @@ import java.util.stream.Collectors;
 @Controller
 public class MainController {
 
-    List<Room> roomList = new ArrayList<>();
-    static int roomNumber = 0;
+    // todo private
+    // todo do not leave field variable in singleton object instead save in db or file
+    private List<Room> roomList = new ArrayList<>();
+    // todo db table id
+    private static int roomNumber = 0;
 
     @RequestMapping("/chat")
     public ModelAndView chat(){
@@ -33,11 +37,14 @@ public class MainController {
         return modelAndView;
     }
 
+    // todo hashmap<> model define
+    // todo spring boot message converter (from where to where)
     @RequestMapping("/createRoom")
     @ResponseBody
     public List<Room> createRoom(@RequestParam HashMap<Object, Object> reqParams) {
+        // which is in url comes after ?
         String roomName = (String) reqParams.get("roomName");
-        if (roomName != null && !roomName.trim().equals("")) {
+        if (StringUtils.isBlank(roomName)) {
             Room room = new Room();
             room.setRoomId("room" + ++roomNumber);
             room.setRoomName(roomName);

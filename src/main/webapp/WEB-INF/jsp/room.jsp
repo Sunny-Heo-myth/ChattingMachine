@@ -98,6 +98,23 @@
         createRoom();
     }
 
+    function commonAjax(url, parameter, type, callback, contentType){
+        // send ajax request to url with branch response
+        $.ajax({
+            url: url,
+            data: parameter,
+            type: type,
+            contentType : contentType != null ? contentType : 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (res) {
+                callback(res);
+            },
+            error : function(err){
+                console.log('ajax error');
+                callback(err);
+            }
+        });
+    }
+
     function getRoom(){
         commonAjax('/getRoom', "", 'post', function(result){
             createRoomList(result);
@@ -122,35 +139,20 @@
 
     function createRoomList(res){
         if(res != null){
-            var tag = "<tr><th class='roomNumber'>room number</th><th class='roomName'>room name</th><th class='go'></th></tr>";
+            var tag = "<tr><th class='roomNumber'>room number</th>" +
+                "<th class='roomName'>room name</th><th class='go'></th></tr>";
             res.forEach(function (data, index) {
                 var roomName = data.roomName.trim();
                 var roomId = "room" + (index + 1);
                 tag += "<tr>" +
                     "<td class='roomNumber'>" + (index + 1) + "</td>" +
                     "<td class='roomName'>" + roomName + "</td>" +
-                    "<td class='go'><button type='button' onclick='goChat(\"" + roomId + "\", \"" + roomName + "\")'>join</button></td>" +
+                    "<td class='go'><button type='button' onclick='goChat(\"" +
+                    roomId + "\", \"" + roomName + "\")'>join</button></td>" +
                     "</tr>";
             });
             $("#roomList").empty().append(tag);
         }
-    }
-
-    function commonAjax(url, parameter, type, callback, contentType){
-        $.ajax({
-            url: url,
-            data: parameter,
-            type: type,
-            contentType : 
-                contentType!=null?contentType:'application/x-www-form-urlencoded; charset=UTF-8', 
-            success: function (res) {
-                callback(res);
-            },
-            error : function(err){
-                console.log('error');
-                callback(err);
-            }
-        });
     }
 </script>
 </html>
