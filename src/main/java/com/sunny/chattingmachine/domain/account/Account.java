@@ -1,16 +1,23 @@
 package com.sunny.chattingmachine.domain.account;
 
 import com.sunny.chattingmachine.domain.BaseTimeEntity;
+import com.sunny.chattingmachine.domain.Comment;
+import com.sunny.chattingmachine.domain.Post;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.CascadeType.ALL;
+
 @Table(name = "Account")
 @Entity
 @Builder
 @Getter
-@ToString
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account extends BaseTimeEntity {
@@ -41,12 +48,18 @@ public class Account extends BaseTimeEntity {
     @Column(length = 1000)
     private String refreshToken;
 
-    public void updateRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
+    @OneToMany(mappedBy = "writer", cascade = ALL, orphanRemoval = true)
+    private List<Post> postList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer", cascade = ALL, orphanRemoval = true)
+    private List<Comment> commentList = new ArrayList<>();
+
+    public void addPost(Post post) {
+        postList.add(post);
     }
 
-    public void destroyRefreshToken() {
-        this.refreshToken = null;
+    public void addComment(Comment comment) {
+        commentList.add(comment);
     }
 
     public void updatePassword(PasswordEncoder passwordEncoder, String password) {
@@ -67,6 +80,22 @@ public class Account extends BaseTimeEntity {
 
     public void encodePassword(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(password);
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void destroyRefreshToken() {
+        this.refreshToken = null;
+    }
+
+    public boolean matchPassword(PasswordEncoder passwordEncoder, String checkPassword) {
+        return passwordEncoder.matches(checkPassword, getPassword());
+    }
+
+    public void addUserAuthority() {
+        this.accountRole = AccountRole.USER;
     }
 
 }
