@@ -1,7 +1,7 @@
 package com.sunny.chattingmachine.repository;
 
-import com.sunny.chattingmachine.domain.account.Account;
-import com.sunny.chattingmachine.domain.account.AccountRole;
+import com.sunny.chattingmachine.domain.Account;
+import com.sunny.chattingmachine.domain.AccountRole;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +10,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional

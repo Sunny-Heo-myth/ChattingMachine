@@ -1,6 +1,5 @@
 package com.sunny.chattingmachine.domain;
 
-import com.sunny.chattingmachine.domain.account.Account;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,6 +9,7 @@ import javax.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -21,29 +21,29 @@ public class Comment {
 
     @Id
     @GeneratedValue
-    @Column(name = "comment_id")
-    private Long id;
+    @Column(name = "comment_pk")
+    private Long comment_pk;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "writer_id")
+    @JoinColumn(name = "writer_pk")
     private Account writer;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_pk")
     private Post post;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "parent_id")
+    @JoinColumn(name = "parent_pk")
     private Comment parent;
+
+    @OneToMany(mappedBy = "parent")
+    private List<Comment> childList = new ArrayList<>();
 
     @Lob
     @Column(nullable = false)
     private String content;
 
     private boolean isRemoved= false;
-
-    @OneToMany(mappedBy = "parent")
-    private List<Comment> childList = new ArrayList<>();
 
     @Builder
     public Comment(Account writer, Post post, Comment parent, String content) {
@@ -53,6 +53,8 @@ public class Comment {
         this.content = content;
         this.isRemoved = false;
     }
+
+    // utilities
 
     public void confirmWriter(Account writer) {
         this.writer = writer;
@@ -79,6 +81,37 @@ public class Comment {
 
     public void remove() {
         this.isRemoved = true;
+    }
+
+    public List<Comment> findRemovableList() {
+        List<Comment> result = new ArrayList<>();
+
+        Optional.ofNullable(this.parent).ifPresentOrElse(
+
+                parentComment -> {
+                    if (parentComment.isRemoved() && parentComment.isAllChildRemoved()) {
+                        result.addAll(parentComment.getChildList());
+                        result.add(parentComment);
+                    }
+                },
+
+                () -> {
+                    if (isAllChildRemoved()) {
+                        result.add(this);
+                        result.addAll(this.getChildList());
+                    }
+                }
+
+        );
+        return result;
+    }
+
+    private boolean isAllChildRemoved() {
+        return getChildList().stream()
+                .map(Comment::isRemoved)
+                .filter(isRemoved -> !isRemoved)
+                .findAny()
+                .orElse(true);
     }
 
 }

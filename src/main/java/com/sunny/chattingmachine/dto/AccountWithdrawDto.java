@@ -12,5 +12,9 @@ import javax.validation.constraints.NotBlank;
 public class AccountWithdrawDto {
 
     @NotBlank
-    String checkPassword;
+    private final String checkPassword;
+
+    public AccountWithdrawDto(String checkPassword) {
+        this.checkPassword = checkPassword;
+    }
 }

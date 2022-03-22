@@ -1,7 +1,7 @@
 package com.sunny.chattingmachine.domain;
 
-import com.sunny.chattingmachine.domain.account.Account;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,11 +17,11 @@ public class Post extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
-    private Long id;
+    @Column(name = "post_pk")
+    private Long post_pk;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id")
+    @JoinColumn(name = "writer_pk")
     private Account writer;
 
     @Column(length = 40, nullable = false)
@@ -31,11 +31,19 @@ public class Post extends BaseTimeEntity{
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = true)
+    @Column
     private String filePath;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentList = new ArrayList<>();
+
+    @Builder
+    public Post(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    // utilities
 
     public void confirmWriter(Account writer) {
         this.writer = writer;

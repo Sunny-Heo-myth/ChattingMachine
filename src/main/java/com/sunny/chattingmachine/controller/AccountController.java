@@ -2,7 +2,6 @@ package com.sunny.chattingmachine.controller;
 
 import com.sunny.chattingmachine.dto.*;
 import com.sunny.chattingmachine.service.AccountService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,10 +10,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
-@RequiredArgsConstructor
 public class AccountController {
 
     private final AccountService accountService;
+
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @PostMapping("/signUp")
     @ResponseStatus(HttpStatus.OK)
@@ -40,9 +42,9 @@ public class AccountController {
         accountService.withdraw(accountWithdrawDto.getCheckPassword());
     }
 
-    @DeleteMapping("/account/{id}")
+    @DeleteMapping("/account/{accountId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity getInfo(@Valid @PathVariable("id") Long id) throws Exception {
+    public ResponseEntity getInfo(@Valid @PathVariable("accountId") Long id) throws Exception {
         AccountInfoDto infoDto = accountService.getInfo(id);
         return new ResponseEntity(infoDto, HttpStatus.OK);
     }

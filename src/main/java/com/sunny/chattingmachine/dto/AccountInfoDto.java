@@ -1,12 +1,11 @@
 package com.sunny.chattingmachine.dto;
 
-import com.sunny.chattingmachine.domain.account.Account;
+import com.sunny.chattingmachine.domain.Account;
 import lombok.*;
 
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
 public class AccountInfoDto {
     private final String accountId;
     private final String accountName;

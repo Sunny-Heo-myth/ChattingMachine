@@ -13,9 +13,14 @@ import javax.validation.constraints.Pattern;
 public class AccountUpdatePwDto {
 
     @NotBlank
-    String checkPassword;
+    private final String checkPassword;
 
     @NotBlank
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,30}$")
-    String toBePassword;
+    private final String toBePassword;
+
+    public AccountUpdatePwDto(String checkPassword, String toBePassword) {
+        this.checkPassword = checkPassword;
+        this.toBePassword = toBePassword;
+    }
 }

@@ -1,17 +1,20 @@
 package com.sunny.chattingmachine.service;
 
 import com.sunny.chattingmachine.config.SecurityUtil;
-import com.sunny.chattingmachine.domain.account.Account;
+import com.sunny.chattingmachine.domain.Account;
 import com.sunny.chattingmachine.dto.AccountInfoDto;
 import com.sunny.chattingmachine.dto.AccountSignUpDto;
 import com.sunny.chattingmachine.dto.AccountUpdateDto;
-import com.sunny.chattingmachine.exception.OverlappedIdException;
+import com.sunny.chattingmachine.exception.AccountException;
+import com.sunny.chattingmachine.exception.AccountExceptionType;
 import com.sunny.chattingmachine.repository.AccountRepository;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
+@Transactional
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
@@ -28,8 +31,9 @@ public class AccountServiceImpl implements AccountService {
         account.addUserAuthority();
         account.encodePassword(passwordEncoder);
 
+        // accountId already exists.
         if (accountRepository.findByAccountId(accountSignUpDto.getAccountId()).isPresent()) {
-            throw new OverlappedIdException(accountSignUpDto.getAccountId());
+            throw new AccountException(AccountExceptionType.ACCOUNTID_ALREADY_EXIST);
         }
         accountRepository.save(account);
     }
@@ -37,7 +41,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void update(AccountUpdateDto accountUpdateDto) throws Exception {
         Account account = accountRepository.findByAccountId(SecurityUtil.getLoginUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("could not update - AccountId not found."));
+                .orElseThrow(() -> new AccountException(AccountExceptionType.ACCOUNT_NOT_FOUND));
 
         accountUpdateDto.getAccountName().ifPresent(account::updateName);
         accountUpdateDto.getAccountNickName().ifPresent(account::updateNickName);
@@ -45,34 +49,38 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void updatePassword(String checkPassword, String toBoPassword) throws Exception {
+    public void updatePassword(String asIsPassword, String toBoPassword) {
         Account account = accountRepository.findByAccountId(SecurityUtil.getLoginUsername())
-                .orElseThrow(() -> new Exception("could not updatePassword : Account not exist."));
+                .orElseThrow(() -> new AccountException(AccountExceptionType.ACCOUNT_NOT_FOUND));
+
+        if (account.matchPassword(passwordEncoder, asIsPassword)) {
+            throw new AccountException(AccountExceptionType.WRONG_PASSWORD);
+        }
     }
 
     @Override
-    public void withdraw(String checkPassword) throws Exception {
+    public void withdraw(String checkPassword) {
         Account account = accountRepository.findByAccountId(SecurityUtil.getLoginUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("could not withdraw : AccountId not found."));
+                .orElseThrow(() -> new AccountException(AccountExceptionType.ACCOUNT_NOT_FOUND));
 
-        if (!account.matchPassword(passwordEncoder, checkPassword)) {
-            throw new Exception("could not withdraw : wrong password.");
+        if (account.matchPassword(passwordEncoder, checkPassword)) {
+            throw new AccountException(AccountExceptionType.WRONG_PASSWORD);
         }
 
         accountRepository.delete(account);
     }
 
     @Override
-    public AccountInfoDto getInfo(Long account_pk) throws Exception {
+    public AccountInfoDto getInfo(Long account_pk) {
         Account account = accountRepository.findById(account_pk)
-                .orElseThrow(() -> new UsernameNotFoundException("could not getInfo : AccountId not found."));
+                .orElseThrow(() -> new AccountException(AccountExceptionType.ACCOUNT_NOT_FOUND));
         return new AccountInfoDto(account);
     }
 
     @Override
-    public AccountInfoDto getMyInfo() throws Exception {
+    public AccountInfoDto getMyInfo() {
         Account account = accountRepository.findByAccountId(SecurityUtil.getLoginUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("could not getMyInfo : AccountId not found."));
+                .orElseThrow(() -> new AccountException(AccountExceptionType.ACCOUNT_NOT_FOUND));
         return new AccountInfoDto(account);
     }
 

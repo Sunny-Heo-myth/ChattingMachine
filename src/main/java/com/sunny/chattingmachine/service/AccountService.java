@@ -16,11 +16,11 @@ public interface AccountService {
 
     void update(AccountUpdateDto accountUpdateDto) throws Exception;
 
-    void updatePassword(String checkPassword, String toBoPassword) throws Exception;
+    void updatePassword(String asIsPassword, String toBePassword) throws Exception;
 
     void withdraw(String checkPassword) throws Exception;
 
-    AccountInfoDto getInfo(Long accountId) throws Exception;
+    AccountInfoDto getInfo(Long account_pk) throws Exception;
 
     AccountInfoDto getMyInfo() throws Exception;
 }

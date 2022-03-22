@@ -15,7 +15,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     private final SocketHandler socketHandler;
 
-    @Autowired
     public WebSocketConfig(SocketHandler socketHandler) {
         this.socketHandler = socketHandler;
     }
