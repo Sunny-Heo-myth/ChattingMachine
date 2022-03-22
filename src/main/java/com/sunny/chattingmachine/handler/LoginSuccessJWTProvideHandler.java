@@ -13,11 +13,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
-@RequiredArgsConstructor
 public class LoginSuccessJWTProvideHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtService jwtService;
     private final AccountRepository accountRepository;
+
+    public LoginSuccessJWTProvideHandler(JwtService jwtService, AccountRepository accountRepository) {
+        this.jwtService = jwtService;
+        this.accountRepository = accountRepository;
+    }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,

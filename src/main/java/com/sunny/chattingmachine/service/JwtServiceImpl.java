@@ -2,13 +2,16 @@ package com.sunny.chattingmachine.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.sunny.chattingmachine.domain.account.Account;
+import com.sunny.chattingmachine.domain.Account;
+import com.sunny.chattingmachine.exception.AccountException;
+import com.sunny.chattingmachine.exception.BaseExceptionType;
 import com.sunny.chattingmachine.repository.AccountRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -81,7 +84,7 @@ public class JwtServiceImpl implements JwtService {
         accountRepository.findByAccountId(accountId)
                 .ifPresentOrElse(
                         Account::destroyRefreshToken,
-                        () -> new Exception("No account with the id.")
+                        () -> new AccountException(ACCOUNT_NOT_FOUND)
                 );
     }
 
@@ -110,7 +113,7 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public Optional<String> extractAccessToken(HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader(accessHeader))
-                .filter(refreshToken -> refreshToken.startsWith(BEARER))
+                .filter(accessToken -> accessToken.startsWith(BEARER))
                 .map(accessToken -> accessToken.replace(BEARER, ""));
     }
 
@@ -124,13 +127,9 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public Optional<String> extractAccountId(String accessToken) {
         try {
-                    // return JWT verifier builder with enigma
             return Optional.ofNullable(JWT.require(Algorithm.HMAC512(secret))
-                    // instantiate JWT verifier
                     .build()
-                    // verity accessToken
                     .verify(accessToken)
-                    // get claim
                     .getClaim(ACCOUNTID_CLAIM)
                     .asString());
         }
@@ -159,7 +158,7 @@ public class JwtServiceImpl implements JwtService {
             return true;
         }
         catch (Exception e) {
-            log.error("not a valid token.", e.getMessage());
+            log.error("not a valid token : {}", e.getMessage());
             return false;
         }
     }

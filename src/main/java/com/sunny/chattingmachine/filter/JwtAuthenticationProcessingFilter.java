@@ -1,6 +1,6 @@
 package com.sunny.chattingmachine.filter;
 
-import com.sunny.chattingmachine.domain.account.Account;
+import com.sunny.chattingmachine.domain.Account;
 import com.sunny.chattingmachine.repository.AccountRepository;
 import com.sunny.chattingmachine.service.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -52,11 +52,9 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private void checkAccessTokenAndAuthentication(
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        jwtService.extractAccessToken(request).filter(jwtService::isTokenValid)
-                .flatMap(accessToken -> jwtService.extractAccountId(accessToken)
-                        .flatMap(accountRepository::findByAccountId))
-                .ifPresent(this::saveAuthentication);
-
+        jwtService.extractAccessToken(request).filter(jwtService::isTokenValid).flatMap(jwtService::extractAccountId).ifPresent(accountId -> accountRepository.findByAccountId(accountId).ifPresent(
+                this::saveAuthentication
+        ));
         filterChain.doFilter(request, response);
     }
 

@@ -1,6 +1,6 @@
 package com.sunny.chattingmachine.repository;
 
-import com.sunny.chattingmachine.domain.account.Account;
+import com.sunny.chattingmachine.domain.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

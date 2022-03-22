@@ -14,9 +14,10 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-                                        AuthenticationException exception) throws IOException {
+                                        AuthenticationException exception) throws IOException{
 
-        response.setStatus(HttpServletResponse.SC_OK);  // response with 200 for hiding info.
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);  // response with 200 for hiding info.
+
         response.getWriter().write("fail");
         log.info("Login failed.");
     }

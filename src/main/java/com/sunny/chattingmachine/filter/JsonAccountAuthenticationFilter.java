@@ -1,7 +1,6 @@
 package com.sunny.chattingmachine.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sunny.chattingmachine.domain.account.Account;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -10,7 +9,6 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StreamUtils;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -22,11 +20,12 @@ public class JsonAccountAuthenticationFilter extends AbstractAuthenticationProce
     private static final String DEFAULT_LOGIN_REQUEST_URL = "/login";   // /login/oauth2 + ?
     private static final String HTTP_METHOD = "POST";
     private static final String CONTENT_TYPE = "application/json";
-    private final ObjectMapper objectMapper;
     private static final String ACCOUNTID_KEY = "accountId";
     private static final String PASSWORD_KEY = "password";
     private static final AntPathRequestMatcher DEFAULT_LOGIN_PATH_REQUEST_MATCHER = // for http post method
             new AntPathRequestMatcher(DEFAULT_LOGIN_REQUEST_URL, HTTP_METHOD);
+
+    private final ObjectMapper objectMapper;
 
     // for http get method
     public JsonAccountAuthenticationFilter(ObjectMapper objectMapper) {

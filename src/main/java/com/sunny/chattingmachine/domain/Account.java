@@ -1,16 +1,20 @@
-package com.sunny.chattingmachine.domain.account;
+package com.sunny.chattingmachine.domain;
 
-import com.sunny.chattingmachine.domain.BaseTimeEntity;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.CascadeType.ALL;
+
 @Table(name = "Account")
 @Entity
 @Builder
 @Getter
-@ToString
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account extends BaseTimeEntity {
@@ -23,7 +27,7 @@ public class Account extends BaseTimeEntity {
     @Column(nullable = false, length = 30, unique = true)
     private String accountId;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 30) //*
     private String password;
 
     @Column(nullable = false, length = 30)
@@ -36,17 +40,28 @@ public class Account extends BaseTimeEntity {
     private Integer age;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
     private AccountRole accountRole;
 
     @Column(length = 1000)
     private String refreshToken;
 
-    public void updateRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
+    @Builder.Default
+    @OneToMany(mappedBy = "writer", cascade = ALL, orphanRemoval = true)
+    private List<Post> postList = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "writer", cascade = ALL, orphanRemoval = true)
+    private List<Comment> commentList = new ArrayList<>();
+
+    // utilities
+
+    public void addPost(Post post) {
+        postList.add(post);
     }
 
-    public void destroyRefreshToken() {
-        this.refreshToken = null;
+    public void addComment(Comment comment) {
+        commentList.add(comment);
     }
 
     public void updatePassword(PasswordEncoder passwordEncoder, String password) {
@@ -65,8 +80,24 @@ public class Account extends BaseTimeEntity {
         this.age = age;
     }
 
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void destroyRefreshToken() {
+        this.refreshToken = null;
+    }
+
     public void encodePassword(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(password);
+    }
+
+    public boolean matchPassword(PasswordEncoder passwordEncoder, String checkPassword) {
+        return passwordEncoder.matches(checkPassword, getPassword());
+    }
+
+    public void addUserAuthority() {
+        this.accountRole = AccountRole.USER;
     }
 
 }

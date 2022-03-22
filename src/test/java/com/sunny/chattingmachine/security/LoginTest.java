@@ -1,8 +1,8 @@
 package com.sunny.chattingmachine.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sunny.chattingmachine.domain.account.Account;
-import com.sunny.chattingmachine.domain.account.AccountRole;
+import com.sunny.chattingmachine.domain.Account;
+import com.sunny.chattingmachine.domain.AccountRole;
 import com.sunny.chattingmachine.repository.AccountRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
