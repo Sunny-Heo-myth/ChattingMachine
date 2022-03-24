@@ -18,7 +18,7 @@ public class Post extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_pk")
-    private Long post_pk;
+    private Long postPk;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_pk")

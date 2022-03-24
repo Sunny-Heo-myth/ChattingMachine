@@ -21,7 +21,7 @@ public class PostInfoDto {
     private final List<CommentInfoDto> commentInfoDtoList;
 
     public PostInfoDto(Post post) {
-        this.post_pk = post.getPost_pk();
+        this.post_pk = post.getPostPk();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.filePath = post.getFilePath();

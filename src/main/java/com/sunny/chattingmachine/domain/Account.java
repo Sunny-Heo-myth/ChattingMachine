@@ -12,7 +12,6 @@ import static javax.persistence.CascadeType.ALL;
 
 @Table(name = "Account")
 @Entity
-@Builder
 @Getter
 @Builder
 @AllArgsConstructor

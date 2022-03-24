@@ -18,7 +18,7 @@ public class BriefPostInfo {
     private String createdDate;
 
     public BriefPostInfo(Post post) {
-        this.post_pk = post.getPost_pk();
+        this.post_pk = post.getPostPk();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.writerName = post.getWriter().getName();

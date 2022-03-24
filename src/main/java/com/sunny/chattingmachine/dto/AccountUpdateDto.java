@@ -10,10 +10,14 @@ import java.util.Optional;
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
 public class AccountUpdateDto {
     private final Optional<String> accountName;
     private final Optional<String> accountNickName;
     private final Optional<Integer> accountAge;
 
+    public AccountUpdateDto(Optional<String> accountName, Optional<String> accountNickName, Optional<Integer> accountAge) {
+        this.accountName = accountName;
+        this.accountNickName = accountNickName;
+        this.accountAge = accountAge;
+    }
 }

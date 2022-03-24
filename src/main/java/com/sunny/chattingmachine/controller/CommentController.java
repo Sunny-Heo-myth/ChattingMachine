@@ -17,27 +17,27 @@ public class CommentController {
 
     @PostMapping("/comment/{postId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void commentSave(@PathVariable("postId") Long post_pk,
+    public void commentSave(@PathVariable("postId") Long postPk,
                             CommentSaveDto commentSaveDto) {
-        commentService.save(post_pk, commentSaveDto);
+        commentService.save(postPk, commentSaveDto);
     }
 
     @PostMapping("/comment/{postId}/{commentId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void reCommentSave(@PathVariable("postId") Long post_pk,
-                              @PathVariable("commentId") Long comment_pk,
+    public void reCommentSave(@PathVariable("postId") Long postPk,
+                              @PathVariable("commentId") Long commentPk,
                               CommentSaveDto commentSaveDto) {
-        commentService.saveReComment(post_pk, comment_pk, commentSaveDto);
+        commentService.saveReComment(postPk, commentPk, commentSaveDto);
     }
 
     @PutMapping("/comment/{commentId}")
-    public void update(@PathVariable("commentId") Long comment_pk,
+    public void update(@PathVariable("commentId") Long commentPk,
                        CommentUpdateDto commentUpdateDto) {
-        commentService.update(comment_pk, commentUpdateDto);
+        commentService.update(commentPk, commentUpdateDto);
     }
 
     @DeleteMapping("/comment/{commentId}")
-    public void delete(@PathVariable("commentId") Long comment_pk) {
-        commentService.remove(comment_pk);
+    public void delete(@PathVariable("commentId") Long commentPk) {
+        commentService.remove(commentPk);
     }
 }

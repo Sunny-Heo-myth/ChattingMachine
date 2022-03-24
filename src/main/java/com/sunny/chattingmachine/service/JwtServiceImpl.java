@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.sunny.chattingmachine.exception.AccountExceptionType.ACCOUNT_NOT_FOUND;
+
 @Transactional
 @Service
 @RequiredArgsConstructor

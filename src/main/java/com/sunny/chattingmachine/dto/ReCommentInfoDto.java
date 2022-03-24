@@ -19,9 +19,9 @@ public class ReCommentInfoDto {
     private final static String DEFAULT_DELETE_MESSAGE = "Deleted comment.";
 
     public ReCommentInfoDto(Comment reComment) {
-        this.post_pk = reComment.getPost().getPost_pk();
-        this.parent_pk = reComment.getParent().getComment_pk();
-        this.reComment_pk = reComment.getComment_pk();
+        this.post_pk = reComment.getPost().getPostPk();
+        this.parent_pk = reComment.getParent().getCommentPk();
+        this.reComment_pk = reComment.getCommentPk();
         this.content = reComment.isRemoved() ? DEFAULT_DELETE_MESSAGE : reComment.getContent();
         this.isRemoved = reComment.isRemoved();
         this.writerDto = new AccountInfoDto(reComment.getWriter());
