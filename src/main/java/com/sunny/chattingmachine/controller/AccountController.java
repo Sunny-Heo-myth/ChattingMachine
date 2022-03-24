@@ -42,14 +42,14 @@ public class AccountController {
         accountService.withdraw(accountWithdrawDto.getCheckPassword());
     }
 
-    @DeleteMapping("/account/{accountId}")
+    @GetMapping("/account/{accountId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity getInfo(@Valid @PathVariable("accountId") Long id) throws Exception {
         AccountInfoDto infoDto = accountService.getInfo(id);
         return new ResponseEntity(infoDto, HttpStatus.OK);
     }
 
-    @DeleteMapping("/account")
+    @GetMapping("/account")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity getMyInfo(HttpServletResponse response) throws Exception {
         AccountInfoDto infoDto = accountService.getMyInfo();

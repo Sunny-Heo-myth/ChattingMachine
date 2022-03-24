@@ -4,8 +4,8 @@ import org.springframework.http.HttpStatus;
 
 public enum PostExceptionType implements BaseExceptionType{
     POST_NOT_FOUND(700, HttpStatus.NOT_FOUND, "Post not found."),
-    NOT_AUTHORITY_UPDATE_POST(701, HttpStatus.FORBIDDEN, "Update post forbidden."),
-    NOT_AUTHORITY_DELETE_POST(702, HttpStatus.FORBIDDEN, "Delete post forbidden.");
+    POST_NOT_AUTHORITY_UPDATE(701, HttpStatus.FORBIDDEN, "Update post forbidden."),
+    POST_NOT_AUTHORITY_DELETE(702, HttpStatus.FORBIDDEN, "Delete post forbidden.");
 
     private final int errorCode;
     private final HttpStatus httpStatus;

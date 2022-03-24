@@ -4,8 +4,8 @@ import org.springframework.http.HttpStatus;
 
 public enum CommentExceptionType implements BaseExceptionType{
     COMMENT_NOT_FOUND(800, HttpStatus.NOT_FOUND, "Comment not found."),
-    NOT_AUTHORITY_UPDATE_COMMENT(801, HttpStatus.FORBIDDEN, "Update comment forbidden."),
-    NOT_AUTHORITY_DELETE_COMMENT(802, HttpStatus.FORBIDDEN, "Delete comment forbidden.");
+    COMMENT_NOT_AUTHORITY_UPDATE(801, HttpStatus.FORBIDDEN, "Update comment forbidden."),
+    COMMENT_NOT_AUTHORITY_DELETE(802, HttpStatus.FORBIDDEN, "Delete comment forbidden.");
 
     private final int errorCode;
     private final HttpStatus httpStatus;

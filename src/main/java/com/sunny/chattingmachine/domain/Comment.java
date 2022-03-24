@@ -22,7 +22,7 @@ public class Comment {
     @Id
     @GeneratedValue
     @Column(name = "comment_pk")
-    private Long comment_pk;
+    private Long commentPk;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "writer_pk")
