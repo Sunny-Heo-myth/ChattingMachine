@@ -17,19 +17,22 @@ public class CommentController {
 
     @PostMapping("/comment/{postId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void commentSave(@PathVariable("postId") Long post_pk, CommentSaveDto commentSaveDto) {
+    public void commentSave(@PathVariable("postId") Long post_pk,
+                            CommentSaveDto commentSaveDto) {
         commentService.save(post_pk, commentSaveDto);
     }
 
     @PostMapping("/comment/{postId}/{commentId}")
     @ResponseStatus(HttpStatus.CREATED)
     public void reCommentSave(@PathVariable("postId") Long post_pk,
-                              @PathVariable("commentId") Long comment_pk, CommentSaveDto commentSaveDto) {
+                              @PathVariable("commentId") Long comment_pk,
+                              CommentSaveDto commentSaveDto) {
         commentService.saveReComment(post_pk, comment_pk, commentSaveDto);
     }
 
     @PutMapping("/comment/{commentId}")
-    public void update(@PathVariable("commentId") Long comment_pk, CommentUpdateDto commentUpdateDto) {
+    public void update(@PathVariable("commentId") Long comment_pk,
+                       CommentUpdateDto commentUpdateDto) {
         commentService.update(comment_pk, commentUpdateDto);
     }
 

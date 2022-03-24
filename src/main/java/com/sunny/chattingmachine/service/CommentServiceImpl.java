@@ -8,7 +8,6 @@ import com.sunny.chattingmachine.exception.*;
 import com.sunny.chattingmachine.repository.AccountRepository;
 import com.sunny.chattingmachine.repository.CommentRepository;
 import com.sunny.chattingmachine.repository.PostRepository;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -16,7 +15,7 @@ import java.util.List;
 
 @Service
 @Transactional
-public class CommentServiceImpl implements CommentService{
+public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final AccountRepository accountRepository;
@@ -63,7 +62,7 @@ public class CommentServiceImpl implements CommentService{
                 .orElseThrow(() -> new CommentException(CommentExceptionType.COMMENT_NOT_FOUND));
 
         if (!comment.getWriter().getAccountId().equals(SecurityUtil.getLoginUsername())) {
-            throw new CommentException(CommentExceptionType.NOT_AUTHORITY_UPDATE_COMMENT);
+            throw new CommentException(CommentExceptionType.COMMENT_NOT_AUTHORITY_UPDATE);
         }
 
         commentUpdateDto.getContent().ifPresent(comment::updateContent);
@@ -75,7 +74,7 @@ public class CommentServiceImpl implements CommentService{
                 .orElseThrow(() -> new CommentException(CommentExceptionType.COMMENT_NOT_FOUND));
 
         if (!comment.getWriter().getAccountId().equals(SecurityUtil.getLoginUsername())) {
-            throw new CommentException(CommentExceptionType.NOT_AUTHORITY_DELETE_COMMENT);
+            throw new CommentException(CommentExceptionType.COMMENT_NOT_AUTHORITY_DELETE);
         }
 
         comment.remove();

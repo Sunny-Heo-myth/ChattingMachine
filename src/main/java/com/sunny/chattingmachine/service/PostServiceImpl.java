@@ -13,7 +13,6 @@ import com.sunny.chattingmachine.repository.PostRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.processing.FilerException;
 import javax.transaction.Transactional;
 
 import static com.sunny.chattingmachine.exception.PostExceptionType.POST_NOT_FOUND;
@@ -51,7 +50,7 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(post_pk)
                 .orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
-        checkAuthority(post, PostExceptionType.NOT_AUTHORITY_UPDATE_POST);
+        checkAuthority(post, PostExceptionType.POST_NOT_AUTHORITY_UPDATE);
 
         postUpdateDto.getTitle().ifPresent(post::updateTitle);
         postUpdateDto.getContent().ifPresent(post::updateContent);
@@ -72,7 +71,7 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new PostException(POST_NOT_FOUND)
         );
 
-        checkAuthority(post, PostExceptionType.NOT_AUTHORITY_DELETE_POST);
+        checkAuthority(post, PostExceptionType.POST_NOT_AUTHORITY_DELETE);
 
         if (post.getFilePath() != null) {
             fileService.delete(post.getFilePath());

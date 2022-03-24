@@ -22,7 +22,7 @@ public class Account extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_pk")
-    private Long account_pk;
+    private Long accountPk;
 
     @Column(nullable = false, length = 30, unique = true)
     private String accountId;
@@ -93,7 +93,7 @@ public class Account extends BaseTimeEntity {
     }
 
     public boolean matchPassword(PasswordEncoder passwordEncoder, String checkPassword) {
-        return passwordEncoder.matches(checkPassword, getPassword());
+        return !passwordEncoder.matches(checkPassword, getPassword());
     }
 
     public void addUserAuthority() {
